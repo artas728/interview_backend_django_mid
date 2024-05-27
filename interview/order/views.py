@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 from rest_framework import generics
 
 from django.shortcuts import get_object_or_404
@@ -26,4 +27,22 @@ class DeactivateOrderView(APIView):
         order.is_active = False
         order.save()
         serializer = OrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class OrderListByDateView(APIView):
+    def get(self, request):
+        start_date = request.query_params.get('start_date')
+        embargo_date = request.query_params.get('embargo_date')
+
+        if not start_date or not embargo_date:
+            return Response(
+                {"error": "start_date and embargo_date query parameters are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        orders = Order.objects.filter(
+            Q(start_date__gte=start_date) & Q(embargo_date__lte=embargo_date)
+        )
+        serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
