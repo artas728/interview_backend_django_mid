@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'interview.core',
     'interview.inventory',
-    'interview.order'
+    'interview.order',
+    'interview.profiles'
 ]
 
 MIDDLEWARE = [
@@ -89,6 +90,9 @@ DATABASES = {
         'PORT': '5444',
     }
 }
+
+# Default user model
+AUTH_USER_MODEL = 'profiles.UserProfile'
 
 
 # Password validation
